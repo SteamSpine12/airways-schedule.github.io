@@ -1,346 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Schedule</title>
-    <link rel="icon" type="icon-x" href="favicon.png">
-  <style>
-    /* General Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    /* Body and Global Styling */
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
-      color: #fff; 
-      background: #0018B3; /* Light sky blue background */
-      height: 100vh; /* Take full viewport height */
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Main Content - Table takes up the entire viewport */
-    main {
-      flex: 1 1 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      padding: 0;
-    }
-
-    /* Fullscreen Table Container */
-    .schedule-section {
-      background: #0018B3; /* Vibrant light blue */
-      border-radius: 8px;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-    }
-
-    /* Table Styles */
-    .schedule-table {
-      width: 100%;
-      height: 100%;
-      border-collapse: collapse;
-    }
-
-    .schedule-table th,
-    .schedule-table td {
-      padding: 15px;
-      border: 1px solid #79b8ff;
-      text-align: center;
-    }
-
-    .schedule-table th {
-      background: #0027E9; /* Lighter blue for headers */
-      color: #fff;
-      text-transform: uppercase;
-    }
-
-  .schedule-table tr {
-    font-size: 20px;
-  }
-
-    .schedule-table tr:nth-child(even) {
-      background: #0027E9; /* Light pastel blue */
-    }
-
-    .schedule-table tr:nth-child(odd) {
-      background: #0018B3; /* Alternating lighter shade */
-    }
-
-    /* Header Styling */
-    header {
-      background: #0018B3; /* Header remains styled above table */
-      color: #fff;
-      padding: 10px 0;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 8px 0;
-      font-size: 0.9em;
-      background: #0018B3;
-      color: #fff;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-    }
-  
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alpha Airways</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap">
+<style>
+:root{--red:#E3000F;--red-deep:#B8000C;--bg:#fff;--surface:#fff;--soft:#FFF1F1;--ink:#1A1112;--muted:#6B5C5E;--line:#F0D9DA;--on-red:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150C0D;--surface:#211214;--soft:#2A1517;--ink:#FFF4F4;--muted:#C9A9AC;--line:#3D2326}}
+:root[data-theme="dark"]{--bg:#150C0D;--surface:#211214;--soft:#2A1517;--ink:#FFF4F4;--muted:#C9A9AC;--line:#3D2326}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.55}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--red);color:var(--on-red)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-weight:900;font-stretch:112%;font-size:22px;letter-spacing:-.01em;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo i{display:grid;place-items:center;width:32px;height:32px;background:#fff;color:var(--red);border-radius:50%;font-style:normal;font-weight:900;font-size:20px}
+nav{display:flex;gap:26px;font-weight:600;font-size:15px}
+nav a{text-decoration:none}nav a:hover{text-decoration:underline;text-underline-offset:5px}
+.btn{display:inline-block;border:0;cursor:pointer;font:inherit;font-weight:800;padding:14px 26px;border-radius:999px;background:var(--red);color:#fff;text-decoration:none}
+.btn:hover{background:var(--red-deep)}
+.btn.white{background:#fff;color:var(--red)}.btn.white:hover{background:var(--soft)}
+.hero{background:var(--red);color:var(--on-red);position:relative;overflow:hidden;padding:72px 0 96px}
+.hero svg{position:absolute;right:-60px;top:20px;width:720px;max-width:90%;opacity:.95;pointer-events:none}
+.hero h1{position:relative;font-size:clamp(46px,9vw,112px);line-height:.92;font-weight:900;font-stretch:75%;letter-spacing:-.025em;margin:0 0 22px;max-width:760px}
+.hero p{position:relative;font-size:19px;max-width:460px;margin:0}
+.plane{transform-origin:center;animation:fly 5s ease-in-out 1 both}
+@keyframes fly{from{offset-distance:0%}to{offset-distance:100%}}
+@media (prefers-reduced-motion:reduce){.plane{animation:none}}
+.book{position:relative;margin:-96px auto 0;background:var(--surface);border-radius:20px;box-shadow:0 18px 50px rgba(120,0,8,.28);padding:26px}
+.tabs{display:flex;gap:8px;margin-bottom:20px}
+.tabs button{font:inherit;font-weight:700;border:2px solid var(--line);background:transparent;color:var(--ink);padding:8px 18px;border-radius:999px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.fields{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px;align-items:end}
+label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
+select,input{width:100%;font:inherit;font-weight:600;padding:13px 12px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.swap{width:46px;height:46px;border-radius:50%;border:2px solid var(--red);background:transparent;color:var(--red);font-size:20px;font-weight:900;cursor:pointer}
+.swap:hover{background:var(--red);color:#fff}
+#result{margin:18px 0 0;padding:14px 18px;border-radius:12px;background:var(--soft);font-weight:600;min-height:52px}
+section{padding:84px 0}
+h2{font-size:clamp(32px,5vw,52px);line-height:1;font-weight:900;font-stretch:80%;letter-spacing:-.02em;margin:0 0 12px}
+.lead{color:var(--muted);max-width:520px;margin:0 0 36px}
+.dest{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{border:2px solid var(--line);border-radius:18px;padding:22px;background:var(--surface);cursor:pointer;text-align:left;font:inherit;color:inherit;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--red);transform:translateY(-3px)}
+.card b{display:block;font-size:28px;font-weight:900;font-stretch:80%}
+.card span{color:var(--muted);font-size:14px}
+.card em{display:block;margin-top:34px;font-style:normal;font-weight:800;color:var(--red)}
+.perks{background:var(--soft)}
+.perk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.perk-grid h3{margin:0 0 6px;font-size:20px;font-weight:800}
+.perk-grid p{margin:0;color:var(--muted)}
+.cta{background:var(--red);color:#fff;text-align:center}
+.cta h2{margin-left:auto;margin-right:auto;max-width:640px}
+.cta p{margin:0 auto 28px;max-width:420px}
+nav a[aria-current]{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:3px}
+.page-top{padding-bottom:0}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.tbl{overflow-x:auto;border:2px solid var(--line);border-radius:16px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:680px}
+th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:13px;color:var(--muted);background:var(--soft)}
+tr:last-child td{border-bottom:0}
+.st{font-weight:700}.st.late{color:var(--red)}
+.mform{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:22px}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tier{border:2px solid var(--line);border-radius:18px;padding:26px;background:var(--surface)}
+.tier.top{background:var(--red);border-color:var(--red);color:#fff}
+.tier h3{margin:0;font-size:28px;font-weight:900;font-stretch:80%}
+.tier .m{font-weight:700;margin:2px 0 14px;color:var(--muted)}.tier.top .m{color:#fff}
+.tier ul{margin:0;padding-left:18px}.tier li{margin-bottom:6px}
+footer{padding:36px 0;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between}
+footer div{display:flex;gap:20px;flex-wrap:wrap}
+@media (max-width:900px){.fields{grid-template-columns:1fr 1fr}.swap{display:none}.dest{grid-template-columns:1fr 1fr}.perk-grid{grid-template-columns:1fr}header .wrap{height:auto;flex-wrap:wrap;padding-top:12px;padding-bottom:10px}nav{order:3;width:100%;overflow-x:auto;gap:20px;white-space:nowrap}.filters{grid-template-columns:1fr 1fr}.tiers,.mform{grid-template-columns:1fr}.hero svg{opacity:.35}}
+.hero2{background:var(--red);color:#fff;position:relative;overflow:hidden;padding:72px 0 0;--wf:var(--red)}
+.hero2 .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:20px;align-items:center}
+.hero2 h1{font-size:clamp(48px,8.5vw,108px);line-height:.9;font-weight:900;font-stretch:75%;letter-spacing:-.03em;margin:0 0 20px}
+.hero2 p{font-size:19px;max-width:440px;margin:0}
+.hero2 .art{padding-bottom:50px}
+.hero2 .art svg{width:100%;height:auto;color:#fff;transform:rotate(-7deg);animation:glide 1.6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes glide{from{transform:translateX(120px) rotate(-7deg);opacity:0}to{transform:translateX(0) rotate(-7deg);opacity:1}}
+@media (prefers-reduced-motion:reduce){.hero2 .art svg{animation:none}}
+.curve{display:block;width:100%;height:60px;margin-top:-1px}.curve path{fill:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+.stats b{display:block;font-size:clamp(34px,5vw,56px);font-weight:900;font-stretch:80%;color:var(--red);line-height:1}
+.stats span{color:var(--muted);font-size:15px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.split p{color:var(--muted);margin:0 0 14px;max-width:520px}
+.panel{background:var(--red);border-radius:28px;padding:48px 28px;color:#fff;--wf:var(--red)}
+.panel svg{width:100%;height:auto;display:block}
+.fleet{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ac{border:2px solid var(--line);border-radius:22px;padding:24px;background:var(--surface);--wf:var(--surface);--tail:var(--red)}
+.ac .pl{height:110px;display:flex;align-items:center;color:var(--ink)}
+.ac .pl svg{height:auto}
+.ac h3{margin:10px 0 0;font-size:24px;font-weight:900;font-stretch:80%}
+.ac dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:12px 0 0;font-size:14px;color:var(--muted)}
+.ac dt{font-weight:700;color:var(--ink)}.ac dd{margin:0}
+.tl{list-style:none;margin:0;padding:0;border-left:3px solid var(--red)}
+.tl li{padding:0 0 26px 26px;position:relative}
+.tl li::before{content:"";position:absolute;left:-11px;top:6px;width:19px;height:19px;border-radius:50%;background:var(--bg);border:4px solid var(--red)}
+.tl b{font-size:22px;font-weight:900}.tl p{margin:2px 0 0;color:var(--muted)}
+@media (max-width:900px){.hero2 .wrap,.split,.fleet{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.hero2{padding-top:48px}}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Alpha Airways - Departures</h1>
-  </header>
-  <main>
-    <section class="schedule-section">
-      <table class="schedule-table">
-        <thead>
-          <tr>
-            <th>Flight Number</th>
-            <th>Destination</th>
-            <th>Departure Time</th>
-            <th>Terminal</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>AEL195</td>
-              <td>Tokyo HND<h1 style="font-size: 50px;">🇯🇵</h1></td>
-              <td>10:00AM</td>
-              <td>A3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>TMV417</td>
-              <td>Barcelona BCN<h1 style="font-size: 50px;">🇪🇸</h1></td>
-              <td>10:00AM</td>
-              <td>C4</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>LMN029</td>
-              <td>New York JFK<h1 style="font-size: 50px;">🇺🇸</h1></td>
-              <td>10:10AM</td>
-              <td>A2</td>
-              <td style="color:red;">CANCELLED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>SIW338</td>
-              <td>Lisbon LIS<h1 style="font-size: 50px;">🇵🇹</h1></td>
-              <td>10:15AM</td>
-              <td>B4</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>AVN245</td>
-              <td>Cairo CAI<h1 style="font-size: 50px;">🇪🇬</h1></td>
-              <td>10:30AM</td>
-              <td>C3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>CFO328</td>
-              <td>Zurich ZRH<h1 style="font-size: 50px;">🇨🇭</h1></td>
-              <td>10:40AM</td>
-              <td>B2</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>XCV109</td>
-              <td>Lima LIM<h1 style="font-size: 50px;">🇵🇪</h1></td>
-              <td>10:40AM</td>
-              <td>A1</td>
-              <td style="color:yellow;">DELAYED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>EIM457</td>
-              <td>Houston IAH<h1 style="font-size: 50px;">🇺🇸</h1></td>
-              <td>10:45AM</td>
-              <td>D2</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>ASW246</td>
-              <td>Sydney SYD<h1 style="font-size: 50px;">🇦🇺</h1></td>
-              <td>10:50AM</td>
-              <td>D1</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>LIC211</td>
-              <td>Moscow SVO<h1 style="font-size: 50px;">🇷🇺</h1></td>
-              <td>11:00AM</td>
-              <td>A4</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>RTL412</td>
-              <td>Edinburgh EDI<h1 style="font-size: 50px;">🏴󠁧󠁢󠁳󠁣󠁴󠁿</h1></td>
-              <td>11:05AM</td>
-              <td>B1</td>
-              <td style="color:red;">CANCELLED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>MNA199</td>
-              <td>Johannesburg JHB<h1 style="font-size: 50px;">🇿🇦</h1></td>
-              <td>11:15AM</td>
-              <td>B3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>PSQ021</td>
-              <td>Atlanta ATL<h1 style="font-size: 50px;">🇺🇸</h1></td>
-              <td>11:25AM</td>
-              <td>C1</td>
-              <td style="color:yellow;">DELAYED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>YTR391</td>
-              <td>Canberra CBR<h1 style="font-size: 50px;">🇦🇺</h1></td>
-              <td>11:30AM</td>
-              <td>D3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>DFA402</td>
-              <td>Buenes Aires EZE<h1 style="font-size: 50px;">🇦🇷</h1></td>
-              <td>11:55AM</td>
-              <td>D4</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>ZLL124</td>
-              <td>Dubai DXB<h1 style="font-size: 50px;">🇦🇪</h1></td>
-              <td>12:00PM</td>
-              <td>B4</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>IUR389</td>
-              <td>London LHR<h1 style="font-size: 50px;">🏴󠁧󠁢󠁥󠁮󠁧󠁿</h1></td>
-              <td>12:05PM</td>
-              <td>A1</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzle1.github.io/';">
-              <td>JAW115</td>
-              <td>Sao Paulo GRU
-                <h1 style="font-size: 50px;">🇧🇷</h1></td>
-              <td>12:10PM</td>
-              <td>C4</td> 
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>LKS065</td>
-              <td>Doha DOH<h1 style="font-size: 50px;">🇶🇦</h1></td>
-              <td>12:10PM</td>
-              <td>C1</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>KJD413</td>
-              <td>Oslo OSL<h1 style="font-size: 50px;">🇳🇴</h1></td>
-              <td>12:15PM</td>
-              <td>B1</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>ERB297</td>
-              <td>Guangzhou CAL<h1 style="font-size: 50px;">🇨🇳</h1></td>
-              <td>12:20PM</td>
-              <td>C3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>JHD455</td>
-              <td>Toronto YYZ<h1 style="font-size: 50px;">🇨🇦</h1></td>
-              <td>12:20PM</td>
-              <td>A2</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>HFE242</td>
-              <td>Wellington WLG<h1 style="font-size: 50px;">🇳🇿</h1></td>
-              <td>12:25PM</td>
-              <td>D1</td>
-              <td style="color:red;">CANCELLED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>DSC329</td>
-              <td>Kingston KIN<h1 style="font-size: 50px;">🇯🇲</h1></td>
-              <td>12:30PM</td>
-              <td>D4</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>CVF277</td>
-              <td>Jeddah JED<h1 style="font-size: 50px;">🇸🇦</h1></td>
-              <td>12:30PM</td>
-              <td>A3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>ERF011</td>
-              <td>Amsterdam AMS<h1 style="font-size: 50px;">🇳🇱</h1></td>
-              <td>12:30PM</td>
-              <td>A4</td>
-              <td style="color:yellow;">DELAYED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>QEZ151</td>
-              <td>Mexico City MEX<h1 style="font-size: 50px;">🇲🇽</h1></td>
-              <td>12:45PM</td>
-              <td>C2</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>SYT320</td>
-              <td>Warsaw WAW<h1 style="font-size: 50px;">🇵🇱</h1></td>
-              <td>12:50PM</td>
-              <td>B1</td>
-              <td style="color:red;">CANCELLED</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>WTL169</td>
-              <td>Zagreb ZRE<h1 style="font-size: 50px;">🇭🇷</h1></td>
-              <td>01:00PM</td>
-              <td>A1</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-            <tr onclick="location.href='https://steamspine12.github.io/puzzlel.github.io/';">
-              <td>YIG103</td>
-              <td>Delhi DEL<h1 style="font-size: 50px;">🇮🇳</h1></td>
-              <td>01:00PM</td>
-              <td>D3</td>
-              <td style="color:lime;">ON TIME</td>
-            </tr>
-          
-            
-        </tbody>
-      </table>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2024  Alpha Airways | All Rights Reserved</p>
-  </footer>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="jet" viewBox="0 0 400 120">
+<path d="M16 70C16 56 60 50 120 48H328C368 48 392 60 392 70C392 80 368 92 328 92H112C52 92 16 84 16 70Z" fill="currentColor"/>
+<path d="M22 60 12 10H56L118 52Z" fill="var(--tail,currentColor)"/>
+<path d="M168 82H258L214 116H186Z" fill="currentColor" opacity=".8"/>
+<rect x="222" y="90" width="50" height="18" rx="9" fill="currentColor" stroke="var(--wf)" stroke-width="3"/>
+<path d="M80 66H330" stroke="var(--wf)" stroke-width="5" stroke-dasharray="1 12" stroke-linecap="round"/>
+<path d="M346 58H372L380 66H344Z" fill="var(--wf)"/>
+</symbol></defs></svg>
+<header><div class="wrap">
+<a class="logo" href="#top"><i>α</i>Alpha Airways</a>
+<nav><a href="#home">Home</a><a href="#schedule">Flight schedule</a><a href="#manage">Manage trip</a><a href="#club">Alpha Club</a></nav>
+</div></header>
+
+<main id="top"><div data-view="home">
+<div class="hero2"><div class="wrap">
+<div><h1>Fly first<br>in line.</h1><p>Alpha Airways is an independent airline built on clear fares, comfortable cabins and a crew that cares.</p></div>
+<div class="art"><svg viewBox="0 0 400 120" role="img" aria-label="Alpha Airways jet"><use href="#jet"/></svg></div>
+</div>
+<svg class="curve" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60V0C360 55 1080 55 1440 0V60Z"/></svg></div>
+
+<section style="padding:56px 0 24px"><div class="wrap"><div class="stats">
+<div><b>17</b><span>years in the air</span></div>
+<div><b>86</b><span>aircraft in our fleet</span></div>
+<div><b>9,200</b><span>team members</span></div>
+<div><b>4.7/5</b><span>average passenger rating</span></div>
+</div></div></section>
+
+<section><div class="wrap"><div class="split">
+<div><h2>Built around the passenger</h2>
+<p>Alpha Airways was founded in 2009 by a small group of airline veterans who believed flying should be simple. Clear prices, honest timekeeping and real help when plans change.</p>
+<p>Today we are an independent airline based in Indianapolis, with thousands of people working across our operations, maintenance and cabin crews.</p>
+<p>Every decision starts with one question: would we want this on our own flight?</p></div>
+<div class="panel"><svg viewBox="0 0 400 120" role="img" aria-label="Alpha Airways jet"><use href="#jet"/></svg></div>
+</div></div></section>
+
+<section class="perks"><div class="wrap">
+<h2>Our fleet</h2>
+<p class="lead">Three aircraft types, all maintained to the same strict standard and refreshed regularly.</p>
+<div class="fleet">
+<div class="ac"><div class="pl"><svg viewBox="0 0 400 120" role="img" aria-label="Alpha Airways jet" style="width:62%"><use href="#jet"/></svg></div><h3>Alpha Regional</h3><dl><dt>Seats</dt><dd>76</dd><dt>Aircraft</dt><dd>18</dd><dt>Cabin</dt><dd>Two classes</dd></dl></div>
+<div class="ac"><div class="pl"><svg viewBox="0 0 400 120" role="img" aria-label="Alpha Airways jet" style="width:82%"><use href="#jet"/></svg></div><h3>Alpha Single-Aisle</h3><dl><dt>Seats</dt><dd>180</dd><dt>Aircraft</dt><dd>52</dd><dt>Cabin</dt><dd>Two classes</dd></dl></div>
+<div class="ac"><div class="pl"><svg viewBox="0 0 400 120" role="img" aria-label="Alpha Airways jet" style="width:100%"><use href="#jet"/></svg></div><h3>Alpha Twin-Aisle</h3><dl><dt>Seats</dt><dd>290</dd><dt>Aircraft</dt><dd>16</dd><dt>Cabin</dt><dd>Three classes</dd></dl></div>
+</div></div></section>
+
+<section><div class="wrap"><div class="split">
+<div><h2>Our story so far</h2><p>A few moments that shaped the airline we are today.</p></div>
+<ul class="tl">
+<li><b>2009</b><p>Alpha Airways is founded in Indianapolis with a fleet of four aircraft.</p></li>
+<li><b>2013</b><p>Our first twin-aisle aircraft joins the fleet.</p></li>
+<li><b>2018</b><p>We launch Alpha Club, our free loyalty programme.</p></li>
+<li><b>2022</b><p>We begin renewing the fleet with quieter, more fuel-efficient aircraft.</p></li>
+<li><b>2026</b><p>The 86th aircraft joins the Alpha family.</p></li>
+</ul>
+</div></div></section>
+
+<section class="perks"><div class="wrap">
+<h2>Our promises</h2>
+<p class="lead">What every passenger can expect from Alpha Airways.</p>
+<div class="perk-grid">
+<div><h3>Fares without surprises</h3><p>The price you see includes a carry-on bag and seat selection at check-in.</p></div>
+<div><h3>On time, on record</h3><p>We publish our punctuality openly, so you can judge us on real numbers.</p></div>
+<div><h3>Change it for free</h3><p>Plans shift. Change or cancel up to 24 hours before departure at no cost.</p></div>
+</div></div></section>
+</div>
+
+<div data-view="schedule" hidden><section><div class="wrap">
+<h2>Flight schedule</h2>
+<p class="lead">All departures from Indianapolis (IND).</p>
+<div class="tbl"><table><thead><tr><th>Flight</th><th>Route</th><th>Departs</th><th>Duration</th><th>Status</th><th>Fare from</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div></section></div>
+
+<div data-view="manage" hidden><section><div class="wrap">
+<h2>Manage your trip</h2>
+<p class="lead">Enter your booking reference and last name to find your booking.</p>
+<div class="mform">
+<div><label for="ref">Booking reference</label><input id="ref" maxlength="6" placeholder="6 characters"></div>
+<div><label for="ln">Last name</label><input id="ln" placeholder="As on your ticket"></div>
+<button class="btn" id="find" type="button">Find booking</button>
+</div>
+<p id="mres" class="lead" style="margin-top:18px" aria-live="polite"></p>
+</div></section></div>
+
+<div data-view="club" hidden><section><div class="wrap">
+<h2>Alpha Club</h2>
+<p class="lead">Join for free and earn points as you go.</p>
+<div class="tiers">
+<div class="tier"><h3>Silver</h3><p class="m">Start at 0 points</p><ul><li>Earn points on every purchase</li><li>Member-only offers</li><li>Priority email support</li></ul></div>
+<div class="tier"><h3>Gold</h3><p class="m">From 25,000 points</p><ul><li>Bonus points on purchases</li><li>Early access to offers</li><li>Dedicated phone line</li></ul></div>
+<div class="tier top"><h3>Platinum</h3><p class="m">From 75,000 points</p><ul><li>Double points on purchases</li><li>Exclusive member events</li><li>Personal account manager</li></ul></div>
+</div>
+</div></section></div>
+</main>
+
+<footer><div class="wrap">
+<span>© 2026 Alpha Airways. All rights reserved.</span>
+<div><a href="#">Help</a><a href="#">Baggage</a><a href="#">Contact</a><a href="#">Privacy</a></div>
+</div></footer>
+
+<script>
+var FD=`London|LHR|1230|8|O|GB|QQ1781
+Zurich|ZRH|0645|9.2|O|CH|TTR530
+Bangkok|BKK|0515|19|O|TH|RXY886
+Madrid|MAD|0710|8.8|D35|ES|YS7326
+Kingston|KIN|0220|3.7|O|JM|TC1914
+Lagos|LOS|2330|12|O|NG|DO288
+Osaka|KIX|1650|14|O|JP|VPV421
+Toronto|YYZ|2240|2.2|O|CA|IL5943
+Rome|FCO|0245|9.8|O|IT|XQU178
+Johannesburg|JHB|1515|16|D120|ZA|CRR399
+Dubai|DXB|1355|13|O|AE|EU9560
+Mexico City|MEX|1945|4.2|B|MX|WL6056
+Paris|CDG|0625|8.5|O|FR|CM9696
+Zagreb|ZRE|0100|10|O|HR|WTL168
+Delhi|DEL|1250|16.5|O|IN|DN8396
+Sydney|SYD|0610|20|D50|AU|TPM637
+Dublin|DUB|1450|7.3|O|IE|NS7951
+Guangzhou|CAL|0545|15|O|CN|ZA9529
+Nairobi|NBO|1005|15|D185|KE|EB8672
+Havana|HAV|2240|3.2|O|CU|DWT539
+Frankfurt|FRA|2105|8.5|O|DE|PH2099
+São Paulo|GRU|1525|9.5|O|BR|OV7790
+Singapore|SIN|1200|18|O|SG|RIR511
+Istanbul|IST|0840|11|D20|TR|JR8323
+Bogota|BOG|0030|5.8|O|CO|ZM7195
+Tokyo|HND|0625|13.5|O|JP|IA642
+Lisbon|LIS|1705|8|O|PT|TO8667
+Cairo|CAI|1440|12|B|EG|LGI809
+Mumbai|BOM|0645|17|O|IN|QY8245
+Vancouver|YVR|1400|5|O|CA|RVB951
+Amsterdam|AMS|1110|8.2|O|NL|OZ1711
+Auckland|AKL|0655|22|D275|NZ|WZ8540
+Nice|NCE|0555|9.5|O|FR|FN7950
+Doha|DOH|1445|12.5|O|QA|UIP479
+Lima|LIM|0540|7.5|O|PE|XN2497
+Munich|MUC|2110|9|D65|DE|AC103
+Seoul|ICN|0105|14|O|KR|RC3357
+Manchester|MAN|0010|8|O|GB|TB9053
+Abu Dhabi|AUH|1550|13.5|O|AE|VYU465
+Cancun|CUN|1305|3.5|O|MX|KV9652
+Copenhagen|CPH|1350|8.7|O|DK|PW2309
+Santiago|SCL|0210|10|O|CL|PS2249
+Edinburgh|EDI|0945|8.2|O|GB|WQJ186
+Accra|ACC|0030|11.5|O|GH|FE9701
+Barcelona|BCN|1010|9|O|ES|NM2533
+Taipei|TPE|1630|15|D90|TW|GM331
+Montreal|YUL|0600|2.5|O|CA|MCB953
+Athens|ATH|2015|11|O|GR|LY522
+Melbourne|MEL|1420|21|O|AU|PK5075
+Casablanca|CMN|1730|8.8|O|MA|DP7744
+Panama City|PTY|0425|5|O|PA|ZF2621
+Vienna|VIE|2235|9.5|O|AT|GN5611
+Kuala Lumpur|KUL|0110|19|O|MY|HV1238
+Buenos Aires|EZE|2355|11|B|AR|BG2940
+Stockholm|ARN|1955|9|O|SE|RB7502
+Addis Ababa|ADD|0445|15|D40|ET|UGP828
+Reykjavik|KEF|1305|6|O|IS|AE8782
+Hanoi|HAN|0305|18|O|VN|QE2727
+Brussels|BRU|0420|8.3|O|BE|FM4569
+Jakarta|CGK|0510|21|O|ID|NC6378
+Prague|PRG|1310|9.2|D155|CZ|LF4416
+Cusco|CUZ|0640|8|O|PE|YN4813
+Marrakech|RAK|1035|9|O|MA|KQ7997
+Oslo|OSL|0720|8.8|O|NO|QZ8696
+Riyadh|RUH|0325|13|O|SA|DGH105
+Calgary|YYC|0550|4.2|O|CA|OUK517
+Warsaw|WAW|0240|10|O|PL|VF545
+Nassau|NAS|0900|2.8|O|BS|FL9307
+Berlin|BER|1800|9|O|DE|ZR3647
+Colombo|CMB|1015|19|D230|LK|WI9206
+Milan|MXP|1230|9.5|O|IT|XGS401
+Dakar|DSS|1030|9.5|O|SN|VR2272
+Helsinki|HEL|1230|9.5|O|FI|ID7244
+Bridgetown|BGI|1140|5.2|O|BB|VB5936
+Budapest|BUD|0210|10|O|HU|FUU208
+Manila|MNL|0125|17|O|PH|IS1147
+Glasgow|GLA|2330|7.9|O|GB|KF4373
+Perth|PER|1415|22|O|AU|AN4311
+Punta Cana|PUJ|0950|4.2|O|DO|AB1680
+Lyon|LYS|0750|9|O|FR|JD1637
+Tel Aviv|TLV|2320|11.5|D70|IL|SL5260
+Quito|UIO|0355|6.5|O|EC|TUU831
+Hamburg|HAM|2325|8.8|O|DE|MK3632
+Dar es Salaam|DAR|0655|17|O|TZ|NV2056
+Venice|VCE|2155|9.8|O|IT|QV4221
+Fukuoka|FUK|0730|14.5|O|JP|LB7255
+Halifax|YHZ|0935|3.4|O|CA|JWK396
+Brisbane|BNE|0235|20|B|AU|YZD404
+Bucharest|OTP|1320|11|O|RO|KSA655
+Jeddah|JED|0240|13|O|SA|GRB838
+Guadalajara|GDL|0950|4.5|O|MX|FTD221
+Tashkent|TAS|1035|14.5|O|UZ|QL9880
+Porto|OPO|1710|8.2|O|PT|UJ571
+Bengaluru|BLR|0830|18|O|IN|EL6904
+Baku|GYD|0930|12.5|D25|AZ|HY6997
+San Jose|SJO|2145|4.8|O|CR|YE3105
+Gold Coast|OOL|0520|20.5|O|AU|VW8969
+Belgrade|BEG|1250|10.5|O|RS|MI2519
+Muscat|MCT|2145|14|O|OM|AI8966
+Naples|NAP|1950|10.2|O|IT|IK2371
+Port of Spain|POS|2235|5.5|O|TT|SCF666
+Caracas|CCS|0630|5.8|O|VE|QI5682
+Kigali|KGL|1015|16|O|RW|YX5301
+Valencia|VLC|1100|9|O|ES|AU4078
+Ho Chi Minh City|SGN|2125|19|O|VN|HV8433
+Birmingham|BHX|2220|8.1|O|GB|XMW468
+Amman|AMM|0650|11.5|O|JO|HRI451
+Medellin|MDE|2110|5.6|D45|CO|LLO752
+Tbilisi|TBS|2020|12|O|GE|ZP9612
+Seville|SVQ|2130|9.2|O|ES|FU6826
+Beirut|BEY|2355|11.5|O|LB|AL8672
+Cartagena|CTG|0730|5.3|O|CO|ZBU276
+Almaty|ALA|1150|14|O|KZ|LR4442
+Zanzibar|ZNZ|1200|17.5|O|TZ|XD400
+Dusseldorf|DUS|0340|8.5|O|DE|WS5125
+Phuket|HKT|1715|20|O|TH|MM8930
+Kuwait City|KWI|0040|12.8|O|KW|QZU777
+Sofia|SOF|0950|11|O|BG|QD1501
+Bali|DPS|2310|22|D135|ID|MK9070
+Montevideo|MVD|1635|11.2|O|UY|BX9811
+Algiers|ALG|0620|10|O|DZ|GF4899
+Santo Domingo|SDQ|2355|4.2|O|DO|JL2295
+Hannover|HAJ|1335|8.8|O|DE|GXU109
+Karachi|KHI|1740|15.5|O|PK|UPN464
+Cologne|CGN|2045|8.5|O|DE|YRF839
+Maputo|MPM|2045|17.5|O|MZ|FK8932
+Aruba|AUA|0915|4.8|O|AW|AD8537
+Tunis|TUN|2300|10.5|O|TN|WU132
+Krakow|KRK|0320|10.2|O|PL|CLJ321
+Kathmandu|KTM|0245|17.5|O|NP|TT4165
+Bergen|BGO|0100|8.9|O|NO|KP1859
+Dhaka|DAC|1320|18|D60|BD|XCM368
+Curacao|CUR|1140|5|O|CW|UD5798
+Tallinn|TLL|2055|9.8|O|EE|PD9202
+Cebu|CEB|1845|18|O|PH|LV7570
+Toulouse|TLS|0915|9.3|O|FR|LCC897
+Malaga|AGP|0330|9.4|O|ES|ZPY419
+Entebbe|EBB|1210|16|O|UG|VH2858
+Windhoek|WDH|0835|17|O|NA|QR5534
+Nagoya|NGO|1010|14.2|O|JP|XV8180
+Ottawa|YOW|0435|2|O|CA|FG7685
+Gothenburg|GOT|2255|9.3|O|SE|WL5836
+Bahrain|BAH|1230|12.9|O|BH|ZS6352
+Palma|PMI|1755|9.5|O|ES|OX9382
+Belfast|BFS|0525|7.5|O|GB|EN4484
+Yerevan|EVN|0815|12.2|B|AM|DK4465
+Asuncion|ASU|0835|10.5|O|PY|OIE658
+Cork|ORK|1855|7|O|IE|HK2450
+Hyderabad|HYD|1210|18|O|IN|DI4908
+Marseille|MRS|1545|9.4|O|FR|UM6644
+Luanda|LAD|2035|14|O|AO|WK6811
+Chennai|MAA|2110|18.5|O|IN|VY8204
+Wellington|WLG|0240|23|O|NZ|UVY659
+Cayman Islands|GCM|0735|3.2|O|KY|NL5514
+Bermuda|BDA|1600|2.9|O|BM|MX2933
+Stuttgart|STR|0325|8.8|O|DE|RW4231
+Port-au-Prince|PAP|1505|4|D100|HT|SU6893
+Ljubljana|LJU|1050|10|O|SI|ZPP446
+Vilnius|VNO|2300|10|O|LT|YH2079
+Salzburg|SZG|1850|9.5|O|AT|IK391
+Riga|RIX|1720|10|O|LV|ZOQ383
+San Salvador|SAL|2000|4.6|O|SV|LC9205
+Mauritius|MRU|1825|19|O|MU|RY286
+Islamabad|ISB|1320|15.5|O|PK|EKH574
+Lahore|LHE|0510|15.8|O|PK|VF5169
+Thessaloniki|SKG|1800|11|O|GR|NW8649
+Bordeaux|BOD|1200|9|O|FR|RE1870
+Guayaquil|GYE|0125|6.6|O|EC|NB3135
+Ulaanbaatar|ULN|1615|14|O|MN|QH7813
+Sapporo|CTS|1720|13.2|O|JP|KK5792
+Chiang Mai|CNX|0535|20|O|TH|PI8100
+Da Nang|DAD|0155|19|O|VN|IBU601
+Kinshasa|FIH|1315|14.5|D210|CD|PZ6099
+Douala|DLA|0605|12.8|O|CM|YO3356
+Lome|LFW|1510|11.8|O|TG|QX6652
+Abidjan|ABJ|0820|11.8|O|CI|SB6831
+Lusaka|LUN|2125|17|O|ZM|XXU777
+Harare|HRE|0240|17|O|ZW|RY4992
+Seychelles|SEZ|0640|18|O|SC|TCQ634
+Male|MLE|0555|19.5|O|MV|PK5664
+Phnom Penh|PNH|1150|19.5|O|KH|CR2956
+Yangon|RGN|1705|19|O|MM|QQM745
+Kolkata|CCU|2350|18|O|IN|TG573
+Busan|PUS|0355|14.6|O|KR|GN8423
+Adelaide|ADL|0410|21.5|O|AU|EQG910
+Christchurch|CHC|0440|23|O|NZ|YWP239
+Fiji|NAN|0200|17|O|FJ|KL6522
+Papeete|PPT|1650|15.5|O|PF|XR3197
+La Paz|LPB|1210|9.5|O|BO|RW2608
+Georgetown|GEO|1155|6.2|O|GY|EZZ772
+Paramaribo|PBM|0745|6.8|O|SR|ZV665
+Monterrey|MTY|1945|3.3|O|MX|JF2380
+Guatemala City|GUA|0525|4.3|O|GT|RW5943
+Managua|MGA|0125|4.7|O|NI|FF978
+Tegucigalpa|TGU|2030|4.6|O|HN|VEN756
+Belize City|BZE|0620|3.8|O|BZ|RA5025
+Luxembourg|LUX|0555|8.4|O|LU|LR1607
+Malta|MLA|0310|11|O|MT|XN2639
+Bologna|BLQ|1550|9.9|O|IT|EWQ141
+Turin|TRN|1655|9.6|O|IT|BD5883
+Nuremberg|NUE|0015|8.9|O|DE|WW4314
+Aberdeen|ABZ|1250|8.4|O|GB|AF8345
+Leeds|LBA|0315|8.1|O|GB|CN7196
+Newcastle|NCL|1835|8|O|GB|FH3780
+Liverpool|LPL|2345|8|O|GB|PG6200
+Cardiff|CWL|0210|8.2|O|GB|NX7033
+Southampton|SOU|0535|8.2|O|GB|LW3527
+Lille|LIL|1120|8.6|O|FR|UXO672
+Montpellier|MPL|1045|9.3|D290|FR|CG3302
+Dresden|DRS|0145|9.2|O|DE|CL2689
+Leipzig|LEJ|1200|9.1|D20|DE|GU7203
+Bremen|BRE|0910|8.7|O|DE|NA9060
+Rotterdam|RTM|0400|8.2|O|NL|UUZ375
+Genoa|GOA|0940|9.7|O|IT|LM256
+Palermo|PMO|0920|10.6|O|IT|OI5902
+Pisa|PSA|0335|9.9|O|IT|ED2459
+Bari|BRI|1305|10.4|O|IT|LO6283
+Girona|GRO|0125|9.1|O|ES|SB9278
+Bilbao|BIO|0545|8.7|O|ES|IV1391
+Ibiza|IBZ|2125|9.5|O|ES|LR8708
+Faro|FAO|1050|8.3|O|PT|DIJ138
+Gdansk|GDN|1000|9.5|O|PL|BC8744
+Wroclaw|WRO|1220|9.9|O|PL|SDM918
+Poznan|POZ|1915|9.7|D30|PL|SO7941
+Bratislava|BTS|1710|9.6|O|SK|EK2300
+Brno|BRQ|2250|9.4|D140|CZ|MC2855
+Cluj-Napoca|CLJ|0020|11|O|RO|IA856
+Skopje|SKP|2330|10.8|O|MK|CYT633
+Tirana|TIA|1340|10.5|O|AL|KW2610
+Sarajevo|SJJ|2215|10.3|O|BA|PH5379
+Podgorica|TGD|0540|10.4|D170|ME|OWH509
+Chisinau|KIV|1300|11|O|MD|KN776
+Larnaca|LCA|0615|11.7|O|CY|TF7284
+Tromso|TOS|2020|9.3|O|NO|DS7903
+Trondheim|TRD|0545|9.1|D105|NO|PQ367
+Aarhus|AAR|0330|8.9|O|DK|GM657
+Malmo|MMX|0045|8.9|O|SE|ZE4927
+Turku|TKU|0015|9.6|O|FI|QK4479
+Santorini|JTR|0410|11.2|O|GR|XSA461
+Heraklion|HER|2020|11.4|O|GR|QF8789
+Antalya|AYT|0120|11.3|O|TR|LZ3652
+Izmir|ADB|0545|11.1|O|TR|RF7592
+Sharjah|SHJ|1310|13.2|O|AE|DZ1831
+Dammam|DMM|0050|13.1|O|SA|NMA350
+Medina|MED|0140|12.9|O|SA|IY2868
+Salalah|SLL|1235|14.2|O|OM|LC4283
+Luxor|LXR|0210|12.6|O|EG|BG9313
+Hurghada|HRG|1815|12.4|O|EG|OR682
+Sharm el-Sheikh|SSH|1030|12.5|D205|EG|WO8545
+Fez|FEZ|0435|8.9|B|MA|BG7988
+Tangier|TNG|1905|8.7|O|MA|CF1173
+Oran|ORN|1140|9.9|O|DZ|AJ814
+Monrovia|ROB|0515|11|O|LR|IC9054
+Conakry|CKY|2345|10.8|O|GN|UQ9663
+Banjul|BJL|1515|10.2|O|GM|PB8974
+Abuja|ABV|2205|12.3|O|NG|RM7702
+Kano|KAN|1345|12.5|O|NG|BA6874
+Cotonou|COO|0610|12|O|BJ|CO3024
+Ouagadougou|OUA|0435|11.5|O|BF|FR3366
+Bamako|BKO|2315|11|O|ML|KM4669
+Niamey|NIM|0550|12|O|NE|UFO194
+Mombasa|MBA|0810|16|O|KE|CX2234
+Kilimanjaro|JRO|2040|16.5|O|TZ|SQY349
+Lilongwe|LLW|2140|17.2|O|MW|PWE803
+Antananarivo|TNR|1705|19|O|MG|FPR218
+Gaborone|GBE|0715|17.5|O|BW|MC8259
+Libreville|LBV|1615|13|O|GA|VS5647
+Brazzaville|BZV|2155|14|O|CG|LC9787
+Djibouti|JIB|1330|14.5|O|DJ|IH1993
+Asmara|ASM|1640|14.2|O|ER|HJ9842
+Hiroshima|HIJ|0215|14.4|O|JP|VS3043
+Okinawa|OKA|0825|15|O|JP|RA567
+Sendai|SDJ|1825|13.4|O|JP|XF7606
+Jeju|CJU|1515|14.6|O|KR|HV7824
+Kaohsiung|KHH|0350|15.5|O|TW|FTQ778
+Surabaya|SUB|0000|21.5|O|ID|CE165
+Medan|KNO|1300|20|O|ID|JE6779
+Penang|PEN|1015|19.5|O|MY|AOT402
+Kota Kinabalu|BKI|0150|18.5|O|MY|MUU105
+Davao|DVO|0910|18|O|PH|DD3826
+Siem Reap|REP|0850|19.2|O|KH|OZC966
+Vientiane|VTE|0800|19.3|B|LA|IO7374
+Luang Prabang|LPQ|1840|19.5|O|LA|JIO857
+Pune|PNQ|0915|17.3|O|IN|PJ5230
+Ahmedabad|AMD|2325|16.8|O|IN|DTR131
+Jaipur|JAI|0310|16.4|O|IN|WJ6708
+Goa|GOI|1130|17.5|O|IN|WV5431
+Kochi|COK|0455|18.4|O|IN|DH6410
+Chittagong|CGP|0940|18.2|O|BD|KU8889
+Bishkek|FRU|0815|14.3|O|KG|TR5062
+Dushanbe|DYU|1400|14.8|D45|TJ|RMW369
+Astana|NQZ|0025|13.8|O|KZ|OH2977
+Samarkand|SKD|0710|14.4|O|UZ|BX3301
+Thimphu|PBH|1905|18|D140|BT|NV9610
+Kuching|KCH|1200|19|O|MY|MU8241
+Winnipeg|YWG|1125|3.5|O|CA|TJ692
+Edmonton|YEG|1215|4.4|O|CA|QKR405
+Quebec City|YQB|1710|2.8|O|CA|HWU647
+Oaxaca|OAX|0200|4.8|O|MX|QJZ780
+Merida|MID|0010|3.8|O|MX|TQL951
+Hobart|HBA|0615|22|O|AU|YMQ325
+Cairns|CNS|1045|21|O|AU|QN6447`.split("\n");
+var routes=[["Indianapolis","IND"]].concat(FD.map(function(l){var p=l.split("|");return [p[0],p[1]]}).sort(function(a,b){return a[0].localeCompare(b[0])}));
+
+var views=["home","schedule","manage","club"];
+function route(){var h=location.hash.slice(1),v=views.indexOf(h)>-1?h:"home";
+views.forEach(function(x){document.querySelector('[data-view="'+x+'"]').hidden=x!==v});
+document.querySelectorAll("nav a").forEach(function(a){if(a.getAttribute("href")==="#"+v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+var el=v==="home"&&h&&h!=="home"?document.getElementById(h):null;
+if(el)el.scrollIntoView();else window.scrollTo(0,0)}
+addEventListener("hashchange",route);route();
+function hm(h){return Math.floor(h)+"h "+String(Math.round((h%1)*60)).padStart(2,"0")+"m"}
+function dl(m){return m<60?m+" min":Math.floor(m/60)+"h"+(m%60?" "+(m%60)+"m":"")}
+function nm(c){return routes.filter(function(r){return r[1]===c})[0][0]}
+function fg(c){return String.fromCodePoint.apply(null,c.split("").map(function(h){return 127397+h.charCodeAt(0)}))}
+var fl=FD.map(function(l,i){var p=l.split("|");return {n:p[6],c:p[0],t:p[1],time:p[2].slice(0,2)+":"+p[2].slice(2),dur:+p[3],st:p[4],f:p[5],fare:Math.round(p[3]*38+110)}});
+fl.sort(function(a,b){return a.time<b.time?-1:a.time>b.time?1:0});
+document.getElementById("rows").innerHTML=fl.map(function(x){var d=x.st.charAt(0)==="D",s=d?"\u25cf Delayed "+dl(+x.st.slice(1)):x.st==="B"?"\u25cf Boarding":"\u25cf On time";
+return "<tr><td><b>"+x.n+"</b></td><td>Indianapolis (IND) to "+x.c+" ("+x.t+") "+fg(x.f)+"</td><td>"+x.time+"</td><td>"+hm(x.dur)+"</td><td class='st"+(d?" late":"")+"'>"+s+"</td><td>$"+x.fare+"</td></tr>"}).join("");
+document.getElementById("find").onclick=function(){var r=document.getElementById("ref").value.trim(),l=document.getElementById("ln").value.trim(),m=document.getElementById("mres");
+m.textContent=(r.length!==6||!l)?"Enter a 6-character booking reference and your last name.":"We couldn\u2019t find that booking. Check your details and try again."};
+</script>
 </body>
 </html>
-
-<!--
-            <tr onclick="location.href='https://steamspine12.github.io/puzzle1.github.io/';">
-              <td>GWR821</td>
-              <td>Brasilia BSB<h1 style="font-size: 50px;">🇧🇷</h1></td>
-              <td>02:15PM</td>
-              <td>On Time</td>
-            </tr>
--->
